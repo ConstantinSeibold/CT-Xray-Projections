@@ -73,21 +73,19 @@ The projections_essentials.py file contains essential functions for volume resam
         hist_before_resized_transfer
 
 Example
-
-python
-
-from utils import read_image, display
-from projections_essentials import hist_mastu_transfer
-
-# Read an image
-image_path = "/path/to/image.nii.gz"
-image, array = read_image(image_path)
-
-# Apply projection transfer function
-projection = hist_mastu_transfer(array, axis=0)
-
-# Display image with segmentation mask
-display(image, mask=projection)
+    
+    from utils import read_image, display
+    from projections_essentials import hist_mastu_transfer
+    
+    # Read an image
+    image_path = "/path/to/image.nii.gz"
+    image, array = read_image(image_path)
+    
+    # Apply projection transfer function
+    projection = hist_mastu_transfer(array, axis=0)
+    
+    # Display image with segmentation mask
+    display(image, mask=projection)
 
 License
 
