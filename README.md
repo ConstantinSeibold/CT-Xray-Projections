@@ -5,11 +5,11 @@ Installation
 
 Clone this repository to your local machine:
 
-bash
+### bash
 
-git clone https://github.com/yourusername/ct-xray-projection.git
+    git clone https://github.com/yourusername/ct-xray-projection.git
 
-Requirements
+## Requirements
 
     Python 3.x
     SimpleITK
@@ -22,12 +22,13 @@ Requirements
 
 You can install the dependencies via pip:
 
-bash
+### bash
 
-pip install -r requirements.txt
+    pip install -r requirements.txt
 
-Usage
-Command-line Arguments
+## Usage
+
+-- Command-line Arguments
 
 You can run the main script main.py with the following command-line arguments:
 
@@ -36,11 +37,11 @@ You can run the main script main.py with the following command-line arguments:
 
 For example:
 
-bash
+### bash
 
-python main.py --ct_dir /path/to/ct_images --out_dir /path/to/output
+    python main.py --ct_dir /path/to/ct_images --out_dir /path/to/output
 
-Functions
+## Functions
 
 The utils.py file contains several utility functions for image processing, including:
 
@@ -72,7 +73,8 @@ The projections_essentials.py file contains essential functions for volume resam
         hist_resized_transfer
         hist_before_resized_transfer
 
-Example
+## Example
+### python
     
     from utils import read_image, display
     from projections_essentials import hist_mastu_transfer
