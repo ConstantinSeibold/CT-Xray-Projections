@@ -89,6 +89,59 @@ The projections_essentials.py file contains essential functions for volume resam
     # Display image with segmentation mask
     display(image, mask=projection)
 
+## PAXRay++ labels
+
+Derives the 159 PAXRay++ label classes (frontal and lateral view) from 3D label volumes of a CT segmentation model.
+
+-- Input
+
+    raw_dir/<case>.<ext>: 3D label volumes predicted by the segmentation model, in any format SimpleITK can read (e.g. .nii.gz, .nrrd, .mha).
+    mapping.json: maps category names to the label ids of these volumes.
+
+The category names are listed in CATEGORIES in paxray_labels/categories.py. A category maps to one label id or a list of ids; label ids that are not mapped are treated as background, categories that are not mapped as absent. Classes whose required categories are absent stay empty. Example:
+
+### json
+
+    {
+        "vertebrae T4": 0,
+        "rib 1 left": 1,
+        "lung upper lobe right": 2,
+        "heart": [3, 4],
+        "aorta": 5
+    }
+
+-- Step 1: post-process the 3D labels (optional)
+
+Any post-processing can be used instead, as long as its output is given with a mapping (--pp_mapping in step 2).
+
+    --source_dir: Directory with the raw 3D label volumes.
+    --target_dir: Output directory; the volumes are written in the input format with the label ids of the mapping.
+    --mapping: Mapping file.
+    --nof_jobs: Number of parallel processes (default 4).
+
+### bash
+
+    python postprocessing_3d/post_process_volumes.py --source_dir /path/to/raw --target_dir /path/to/pp --mapping mapping.json --nof_jobs 4
+
+-- Step 2: derive the 2D labels
+
+    --raw_dir: Directory with the raw 3D label volumes.
+    --pp_dir: Directory with the post-processed 3D label volumes.
+    --out_dir: Output directory.
+    --mapping: Mapping file of the raw volumes.
+    --pp_mapping: Mapping file of the post-processed volumes (default: --mapping).
+    --jobs: Number of parallel processes (default 4).
+    --cases: Optional list of case names, i.e. file names without extension (default: all cases present in raw_dir and pp_dir).
+
+### bash
+
+    python project_labels.py --raw_dir /path/to/raw --pp_dir /path/to/pp --out_dir /path/to/labels --mapping mapping.json --jobs 4
+
+-- Output
+
+    <out_dir>/<case>_frontal.npy, <out_dir>/<case>_lateral.npy: bool arrays of shape 159 x 512 x 512.
+    The channel order is given by paxray_labels/paxray_classes.json.
+
 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.

@@ -7,7 +7,6 @@ from skimage.color import label2rgb
 from skimage.morphology import label
 from pqdm.processes import pqdm
 import torch
-import fid_score
 
 
 
@@ -130,6 +129,7 @@ def get_fid(dir_, target_dir='/hkfs/work/workspace/scratch/pc8928-xray_training/
     Returns:
     - tuple: FID score for frontal and lateral images.
     """
+    import fid_score
     fid_frontal = fid_score.calculate_fid_given_paths(
         [os.path.join(dir_, '1/'), target_dir],    
         256,
