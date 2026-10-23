@@ -89,6 +89,26 @@ The projections_essentials.py file contains essential functions for volume resam
     # Display image with segmentation mask
     display(image, mask=projection)
 
+## 3D rendering
+
+`render_3d.py` renders a CT volume in 3D from the upper right, with standard HU bins (lung -950…-500, fat
+-190…-30, muscle / soft tissue -29…150, bone ≥ 150) drawn as thin translucent surfaces. With a label map that uses
+the [DAP Atlas](https://github.com/alexanderjaus/AtlasDataset) label ids it also writes one image per label group
+(lung lobes and airways, heart and great vessels, rib cage, spine, abdominal organs, shoulder girdle and back
+muscles), composited over a lightened copy of the CT rendering so every structure stays visible.
+
+### bash
+
+    # CT only
+    python render_3d.py --ct /path/to/ct.nii.gz --out_dir /path/to/output
+
+    # CT and DAP Atlas labels (label map on the CT grid)
+    python render_3d.py --ct /path/to/ct.nii.gz --labels /path/to/atlas_prediction.nii.gz --out_dir /path/to/output
+
+Optional: `--azimuth` (degrees from anterior towards patient left, default 35), `--elevation` (degrees above the
+axial plane, default 25), `--device cuda|mps|cpu` (default: best available). Each image is written as PNG and PDF.
+For a 512×512×159 CT with labels it takes about 25 s on an Apple M3 Max (MPS).
+
 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
