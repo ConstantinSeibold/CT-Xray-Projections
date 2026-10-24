@@ -142,6 +142,44 @@ Any post-processing can be used instead, as long as its output is given with a m
     <out_dir>/<case>_frontal.npy, <out_dir>/<case>_lateral.npy: bool arrays of shape 159 x 512 x 512.
     The channel order is given by paxray_labels/paxray_classes.json.
 
+## Quality control
+
+Rule-based quality control of 3D label volumes. The rules are given in quality_control/qc_config.json and refer to the category names of paxray_labels/categories.py; rules only use categories that are mapped.
+
+-- Input
+
+    seg_dir/<case>.<ext>: 3D label volumes, in any format SimpleITK can read (e.g. .nii.gz, .nrrd, .mha).
+    mapping.json: maps category names to the label ids of these volumes (as above).
+
+-- Step 1: reference table (optional)
+
+Size rules compare each category with the median volume of its largest connected component in accepted volumes. quality_control/qc_reference.csv is the table used for PAXRay++; for another segmentation model, build one from volumes accepted by visual inspection:
+
+    --ids: File with one case name per line, i.e. file name without extension.
+
+### bash
+
+    python quality_control/qc_volumes.py reference /path/to/seg_dir reference.csv --config quality_control/qc_config.json --mapping mapping.json --ids accepted.txt --jobs 4
+
+and set "reference" in the config to this file.
+
+-- Step 2: evaluate the rules
+
+    --config: QC config.
+    --mapping: Mapping file of the volumes.
+    --features: Optional; also writes the measured features, which can be re-evaluated with a changed config by "apply" instead of "run".
+    --ids: Optional list of case names (default: all volumes in seg_dir).
+    --jobs: Number of parallel processes (default 4).
+
+### bash
+
+    python quality_control/qc_volumes.py run /path/to/seg_dir qc.csv --config quality_control/qc_config.json --mapping mapping.json --jobs 4
+    python quality_control/qc_volumes.py apply features.csv qc.csv --config quality_control/qc_config.json --mapping mapping.json
+
+-- Output
+
+    qc.csv: one row per volume with volume_id, qc_fail and qc_reason (the rules that fired and the offending categories, e.g. "missing structure: trachea; heart too small (< 0.2x reference): heart atrium left=0.118"). A volume that could not be read has an empty qc_fail and the error as qc_reason.
+
 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
